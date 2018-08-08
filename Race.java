@@ -1,20 +1,26 @@
 import java.util.Scanner;
 import java.util.Random;
+import Car.Car;
 
-class Driver {
+class Driver extends Car{
   private int current_speed, fastest_speed;
-  private Random accelerator = new Random();
 
   public Driver() {
+    super();
     this.current_speed = this.fastest_speed = 0;
   }
 
-  public Driver(int current_speed, int fastest_speed) {
+  public Driver(int year, int initial_speed, String model, String make, int current_speed, int fastest_speed) {
+    super(year, model, make, initial_speed);
     this.current_speed = current_speed;
     this.fastest_speed = fastest_speed;
   }
 
-  public void setDriverInfo(int current_speed, int fastest_speed) {
+  public void setDriverInfo(int year, int initial_speed, String model, String make, int current_speed, int fastest_speed) {
+    super.setYear(year);
+    super.setModel(model);
+    super.setMake(make);
+    super.setSpeed(initial_speed);
     this.current_speed = current_speed;
     this.fastest_speed = fastest_speed;
   }
@@ -23,21 +29,26 @@ class Driver {
     this.fastest_speed = fastest_speed;
   }
 
-  public void accelerate() {
-    // Accerate by adding a random speed by 5 to 30 (inclusive)
-    this.current_speed += this.accelerator.nextInt(25) + 5;
-  }
-
-  public void brake() {
-    this.current_speed -= this.accelerator.nextInt(25) + 5;
-  }
-
   public int getCurrentSpeed() {
     return this.current_speed;
   }
 
   public int getFastestSpeed() {
     return this.fastest_speed;
+  }
+
+  public int accelerate() {
+    this.current_speed = super.accelerate();
+    return this.current_speed;
+  }
+
+  public int brake() {
+    this.current_speed = super.brake();
+    return this.current_speed;
+  }
+
+  public void displayDriverInfo() {
+    super.displayCarInfo();
   }
 
   public void displayCurrentSpeed() {
@@ -50,36 +61,20 @@ class Driver {
 }
 
 class DrivingSimulation extends Driver {
-  private int year, initial_speed;
-  private String model, make;
-
   public DrivingSimulation() {
     super();
-    this.year = this.initial_speed = 0;
-    this.model = this.make = "";
   }
 
   public DrivingSimulation(int year, int initial_speed, String model, String make) {
-    super(initial_speed, initial_speed);
-    this.year = year;
-    this.initial_speed = initial_speed;
-    this.model = model;
-    this.make = make;
+    super(year, initial_speed, model, make, initial_speed, initial_speed);
   }
 
   public void setCarInfo(int year, int initial_speed, String model, String make) {
-    super.setDriverInfo(initial_speed, initial_speed);
-    this.year = year;
-    this.initial_speed = initial_speed;
-    this.model = model;
-    this.make = make;
+    super.setDriverInfo(year, initial_speed, model, make, initial_speed, initial_speed);
   }
 
-  public void displayCarInfo() {
-    System.out.println("Year: " + this.year);
-    System.out.println("Initial speed: " + this.initial_speed);
-    System.out.println("Model: " + this.model);
-    System.out.println("Make: " + this.make);
+  public void displaySimulationInfo() {
+    super.displayDriverInfo();
   }
 }
 
@@ -100,10 +95,8 @@ public class Race {
     System.out.print("Initial speed: ");
     initial_speed = keyboard.nextInt();
     keyboard.nextLine();
-    // System.out.println();
     System.out.print("Model: ");
     model = keyboard.nextLine();
-    // System.out.println();
     System.out.print("Make: ");
     make = keyboard.nextLine();
     System.out.println();
@@ -117,14 +110,11 @@ public class Race {
     System.out.print("Year: ");
     year = keyboard.nextInt();
     keyboard.nextLine();
-    // System.out.println();
     System.out.print("Initial speed: ");
     initial_speed = keyboard.nextInt();
     keyboard.nextLine();
-    // System.out.println();
     System.out.print("Model: ");
     model = keyboard.nextLine();
-    // System.out.println();
     System.out.print("Make: ");
     make = keyboard.nextLine();
     System.out.println();
@@ -147,30 +137,26 @@ public class Race {
       switch(carOperator.nextInt(4)) {
         case 0:
           beforeAcceleration = car1.getCurrentSpeed();
-          car1.accelerate();
+          afterAcceleration = car1.accelerate();
           if(car1.getCurrentSpeed() > car1.getFastestSpeed())
             car1.setFastestSpeed(car1.getCurrentSpeed());
-          afterAcceleration = car1.getCurrentSpeed();
           System.out.println("Car 1 accelerated by " + (afterAcceleration - beforeAcceleration) + ".");
           break;
         case 1:
           beforeAcceleration = car2.getCurrentSpeed();
-          car2.accelerate();
+          afterAcceleration = car2.accelerate();
           if(car2.getCurrentSpeed() > car2.getFastestSpeed())
             car2.setFastestSpeed(car2.getCurrentSpeed());
-          afterAcceleration = car2.getCurrentSpeed();
           System.out.println("Car 2 accelerated by " + (afterAcceleration - beforeAcceleration) + ".");
           break;
         case 2:
           beforeAcceleration = car1.getCurrentSpeed();
-          car1.brake();
-          afterAcceleration = car1.getCurrentSpeed();
+          afterAcceleration = car1.brake();
           System.out.println("Car 1 decelerates by " + Math.abs(afterAcceleration - beforeAcceleration) + ".");
           break;
         case 3:
           beforeAcceleration = car2.getCurrentSpeed();
-          car2.brake();
-          afterAcceleration = car2.getCurrentSpeed();
+          afterAcceleration = car2.brake();
           System.out.println("Car 2 decelerates by " + Math.abs(afterAcceleration - beforeAcceleration) + ".");
           break;
       }
